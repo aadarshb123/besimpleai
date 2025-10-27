@@ -2,6 +2,7 @@ import { SubmissionUpload } from '@/components/submissions/SubmissionUpload';
 import { SubmissionList } from '@/components/submissions/SubmissionList';
 import { JudgeForm } from '@/components/judges/JudgeForm';
 import { JudgeList } from '@/components/judges/JudgeList';
+import { JudgeAssignment } from '@/components/judges/JudgeAssignment';
 import { useSubmissions } from '@/hooks/useSubmissions';
 import { useJudges } from '@/hooks/useJudges';
 
@@ -45,6 +46,9 @@ function App() {
           error={judgesError}
           onToggleActive={toggleActive}
         />
+
+        {/* Assignment Section */}
+        <JudgeAssignment submissions={submissions} judges={judges} />
       </main>
     </div>
   );
