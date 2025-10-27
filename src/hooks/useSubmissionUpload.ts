@@ -10,7 +10,7 @@ interface UploadState {
   success: string | null;
 }
 
-export function useSubmissionUpload() {
+export function useSubmissionUpload(onSuccess?: () => void) {
   const [state, setState] = useState<UploadState>({
     isUploading: false,
     error: null,
@@ -32,6 +32,11 @@ export function useSubmissionUpload() {
         error: null,
         success: `Successfully uploaded ${submissions.length} submission(s)`,
       });
+
+      // Call success callback if provided
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (err) {
       setState({
         isUploading: false,

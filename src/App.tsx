@@ -1,6 +1,10 @@
 import { SubmissionUpload } from '@/components/submissions/SubmissionUpload';
+import { SubmissionList } from '@/components/submissions/SubmissionList';
+import { useSubmissions } from '@/hooks/useSubmissions';
 
 function App() {
+  const { submissions, isLoading, error, refetch } = useSubmissions();
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow">
@@ -15,7 +19,12 @@ function App() {
       </header>
 
       <main className="max-w-7xl mx-auto py-6 px-4 space-y-6">
-        <SubmissionUpload />
+        <SubmissionUpload onSuccess={refetch} />
+        <SubmissionList
+          submissions={submissions}
+          isLoading={isLoading}
+          error={error}
+        />
       </main>
     </div>
   );

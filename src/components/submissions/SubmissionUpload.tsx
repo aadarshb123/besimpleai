@@ -6,6 +6,10 @@ import { Card } from '@/components/ui/Card';
 import { Alert } from '@/components/ui/Alert';
 import { useSubmissionUpload } from '@/hooks/useSubmissionUpload';
 
+interface SubmissionUploadProps {
+  onSuccess?: () => void;
+}
+
 const styles = {
   uploadArea: 'border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors',
   icon: 'mx-auto mb-4 text-gray-400',
@@ -14,9 +18,9 @@ const styles = {
   fileInfo: 'text-sm text-gray-500 mt-2',
 };
 
-export function SubmissionUpload() {
+export function SubmissionUpload({ onSuccess }: SubmissionUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { isUploading, error, success, uploadFile } = useSubmissionUpload();
+  const { isUploading, error, success, uploadFile } = useSubmissionUpload(onSuccess);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
