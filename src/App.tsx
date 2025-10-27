@@ -1,3 +1,5 @@
+import { SubmissionUpload } from '@/components/submissions/SubmissionUpload';
+
 function App() {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -12,13 +14,8 @@ function App() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto py-6 px-4">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Welcome to AI Judge</h2>
-          <p className="text-gray-600">
-            An AI-powered evaluation system for data annotation workflows.
-          </p>
-        </div>
+      <main className="max-w-7xl mx-auto py-6 px-4 space-y-6">
+        <SubmissionUpload />
       </main>
     </div>
   );
