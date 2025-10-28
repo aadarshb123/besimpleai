@@ -75,6 +75,7 @@ export function EvaluationRunner({ submissions }: EvaluationRunnerProps) {
           onClick={handleRun}
           disabled={!selectedQueue || isRunning}
           isLoading={isRunning}
+          className="w-full flex items-center justify-center"
         >
           <Play size={16} className="mr-2" />
           {isRunning ? 'Running Evaluations...' : 'Run AI Judges'}

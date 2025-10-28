@@ -1,9 +1,8 @@
-// Main evaluation logic - orchestrates LLM calls
+// Main evaluation logic - orchestrates LLM calls via Cloud Functions
 
 import { Judge, Question, Answer, Verdict } from '@/lib/types';
-import { callOpenAI } from './openai';
-import { callAnthropic } from './anthropic';
-import { LLMResponse, LLMError } from './types';
+import { functions } from '@/lib/firebase/config';
+import { httpsCallable } from 'firebase/functions';
 import { MAX_RETRIES, RETRY_DELAY } from '@/utils/constants';
 
 interface EvaluationResult {
@@ -12,6 +11,14 @@ interface EvaluationResult {
   reasoning?: string;
   error?: string;
   latency: number;
+}
+
+interface CloudFunctionResponse {
+  success: boolean;
+  verdict?: Verdict;
+  reasoning?: string;
+  error?: string;
+  retryable?: boolean;
 }
 
 // Build the user prompt from question and answer
@@ -38,18 +45,24 @@ Respond in JSON format:
 `.trim();
 }
 
-// Call the appropriate LLM based on provider
-async function callLLM(
+// Call the Cloud Function to evaluate
+async function callCloudFunction(
   judge: Judge,
   userPrompt: string
-): Promise<LLMResponse> {
-  if (judge.provider === 'openai') {
-    return await callOpenAI(judge.modelName, judge.systemPrompt, userPrompt);
-  } else if (judge.provider === 'anthropic') {
-    return await callAnthropic(judge.modelName, judge.systemPrompt, userPrompt);
-  } else {
-    throw new Error(`Unknown provider: ${judge.provider}`);
-  }
+): Promise<CloudFunctionResponse> {
+  const evaluateAnswerFn = httpsCallable<unknown, CloudFunctionResponse>(
+    functions,
+    'evaluateAnswer'
+  );
+
+  const result = await evaluateAnswerFn({
+    provider: judge.provider,
+    modelName: judge.modelName,
+    systemPrompt: judge.systemPrompt,
+    userPrompt,
+  });
+
+  return result.data;
 }
 
 // Evaluate with retry logic
@@ -63,25 +76,28 @@ async function evaluateWithRetry(
 
   try {
     const userPrompt = buildUserPrompt(question, answer);
-    const response = await callLLM(judge, userPrompt);
+    const response = await callCloudFunction(judge, userPrompt);
 
     const latency = Date.now() - startTime;
 
-    return {
-      success: true,
-      verdict: response.verdict,
-      reasoning: response.reasoning,
-      latency,
-    };
+    if (response.success && response.verdict && response.reasoning) {
+      return {
+        success: true,
+        verdict: response.verdict,
+        reasoning: response.reasoning,
+        latency,
+      };
+    } else {
+      throw new Error(response.error || 'Unknown error from Cloud Function');
+    }
   } catch (err) {
     const latency = Date.now() - startTime;
 
     // Check if error is retryable
-    const isLLMError = (err: unknown): err is LLMError => {
-      return typeof err === 'object' && err !== null && 'retryable' in err;
-    };
+    const errorObj = err as { message?: string; retryable?: boolean };
+    const isRetryable = errorObj.retryable === true;
 
-    if (isLLMError(err) && err.retryable && retries < MAX_RETRIES) {
+    if (isRetryable && retries < MAX_RETRIES) {
       // Wait before retrying (exponential backoff)
       await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * (retries + 1)));
       return evaluateWithRetry(judge, question, answer, retries + 1);

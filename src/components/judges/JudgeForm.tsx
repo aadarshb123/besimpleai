@@ -24,7 +24,7 @@ export function JudgeForm({ onSubmit }: JudgeFormProps) {
     name: '',
     systemPrompt: '',
     provider: 'openai',
-    modelName: 'gpt-4-turbo-preview',
+    modelName: 'gpt-3.5-turbo',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +61,7 @@ export function JudgeForm({ onSubmit }: JudgeFormProps) {
         name: '',
         systemPrompt: '',
         provider: 'openai',
-        modelName: 'gpt-4-turbo-preview',
+        modelName: 'gpt-3.5-turbo',
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create judge');
