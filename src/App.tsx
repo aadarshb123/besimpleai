@@ -4,6 +4,7 @@ import { JudgeForm } from '@/components/judges/JudgeForm';
 import { JudgeList } from '@/components/judges/JudgeList';
 import { JudgeAssignment } from '@/components/judges/JudgeAssignment';
 import { EvaluationRunner } from '@/components/evaluations/EvaluationRunner';
+import { ResultsView } from '@/components/results/ResultsView';
 import { useSubmissions } from '@/hooks/useSubmissions';
 import { useJudges } from '@/hooks/useJudges';
 
@@ -53,6 +54,9 @@ function App() {
 
         {/* Evaluation Section */}
         <EvaluationRunner submissions={submissions} />
+
+        {/* Results Section */}
+        <ResultsView />
       </main>
     </div>
   );
