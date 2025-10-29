@@ -38,9 +38,9 @@ export const VERDICT_OPTIONS: { value: Verdict; label: string }[] = [
 ];
 
 export const VERDICT_COLORS: Record<Verdict, string> = {
-  pass: 'text-green-700 bg-green-100',
-  fail: 'text-red-700 bg-red-100',
-  inconclusive: 'text-yellow-700 bg-yellow-100',
+  pass: 'text-secondary-700 bg-secondary-100 border border-secondary-300',
+  fail: 'text-red-700 bg-red-100 border border-red-300',
+  inconclusive: 'text-primary-700 bg-primary-100 border border-primary-300',
 };
 
 // ============================================================================

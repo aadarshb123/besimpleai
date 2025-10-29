@@ -12,15 +12,16 @@ interface JudgeCardProps {
 }
 
 const styles = {
-  card: 'bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow',
+  card: 'bg-white border-2 border-gray-200 rounded-xl p-5 hover:shadow-lg hover:border-primary-300 transition-all duration-200',
   header: 'flex items-start justify-between mb-3',
   name: 'text-lg font-semibold text-gray-900',
   badge: (active: boolean) =>
-    `px-2 py-1 text-xs font-medium rounded ${
-      active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+    `px-3 py-1 text-xs font-semibold rounded-full shadow-sm ${
+      active ? 'bg-secondary-100 text-secondary-700 border border-secondary-300' : 'bg-gray-100 text-gray-600 border border-gray-300'
     }`,
-  modelInfo: 'text-sm text-gray-600 mb-2',
-  prompt: 'text-sm text-gray-700 mb-3 p-3 bg-gray-50 rounded border border-gray-200',
+  modelInfo: 'text-sm text-gray-600 mb-3 flex items-center gap-2',
+  providerBadge: 'px-2 py-0.5 bg-primary-50 text-primary-700 rounded text-xs font-medium',
+  prompt: 'text-sm text-gray-700 mb-4 p-4 bg-gradient-to-br from-gray-50 to-primary-50/30 rounded-lg border border-gray-200',
   actions: 'flex gap-2',
 };
 
@@ -36,11 +37,13 @@ export function JudgeCard({ judge, onToggleActive, onEdit }: JudgeCardProps) {
   return (
     <div className={styles.card}>
       <div className={styles.header}>
-        <div>
+        <div className="flex-1">
           <h3 className={styles.name}>{judge.name}</h3>
-          <p className={styles.modelInfo}>
-            {judge.provider} • {judge.modelName}
-          </p>
+          <div className={styles.modelInfo}>
+            <span className={styles.providerBadge}>{judge.provider}</span>
+            <span className="text-gray-400">•</span>
+            <span className="text-xs text-gray-500">{judge.modelName}</span>
+          </div>
         </div>
         <span className={styles.badge(judge.active)}>
           {judge.active ? 'Active' : 'Inactive'}
@@ -60,7 +63,7 @@ export function JudgeCard({ judge, onToggleActive, onEdit }: JudgeCardProps) {
         <Button
           variant="secondary"
           onClick={handleEdit}
-          className="flex items-center justify-center"
+          className="flex items-center justify-center px-4"
         >
           <Edit size={16} className="mr-1" />
           Edit
@@ -68,7 +71,7 @@ export function JudgeCard({ judge, onToggleActive, onEdit }: JudgeCardProps) {
         <Button
           variant={judge.active ? 'secondary' : 'primary'}
           onClick={handleToggle}
-          className="flex-1"
+          className="flex-1 px-4"
         >
           {judge.active ? 'Deactivate' : 'Activate'}
         </Button>

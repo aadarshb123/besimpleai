@@ -6,11 +6,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const styles = {
-  base: 'px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
+  base: 'px-4 py-2 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md min-w-[80px]',
   variants: {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700',
-    secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
-    danger: 'bg-red-600 text-white hover:bg-red-700',
+    primary: 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 !bg-[#eda436]',
+    secondary: 'bg-white text-gray-700 border-2 border-gray-300 hover:border-primary-400 hover:bg-primary-50',
+    danger: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800',
   },
 };
 

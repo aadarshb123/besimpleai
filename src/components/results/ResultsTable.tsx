@@ -1,26 +1,37 @@
 // Component for displaying evaluations in a table format
 
 import { Evaluation } from '@/lib/types';
-import { VERDICT_COLORS } from '@/utils/constants';
 
 interface ResultsTableProps {
   evaluations: Evaluation[];
 }
 
 const styles = {
-  container: 'bg-white border rounded-lg overflow-hidden',
+  container: 'bg-white border-2 border-gray-200 rounded-xl overflow-hidden shadow-sm',
   table: 'min-w-full divide-y divide-gray-200',
-  thead: 'bg-gray-50',
-  th: 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-  tbody: 'bg-white divide-y divide-gray-200',
+  thead: 'bg-gradient-to-r from-primary-50 to-secondary-50',
+  th: 'px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider',
+  tbody: 'bg-white divide-y divide-gray-100',
   td: 'px-6 py-4 text-sm text-gray-900',
   tdReasoning: 'px-6 py-4 text-sm text-gray-600 max-w-md',
-  verdictBadge: 'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
+  verdictBadge: 'inline-flex px-3 py-1 text-xs font-bold rounded-full shadow-sm',
+  row: 'hover:bg-primary-50/30 transition-colors duration-150',
 };
 
 export function ResultsTable({ evaluations }: ResultsTableProps) {
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleString();
+  };
+
+  const getVerdictStyle = (verdict: Evaluation['verdict']) => {
+    switch (verdict) {
+      case 'pass':
+        return { backgroundColor: '#e5ede1', color: '#5f8f4f', borderColor: '#a7c39a' };
+      case 'fail':
+        return { backgroundColor: '#fee2e2', color: '#991b1b', borderColor: '#fca5a5' };
+      case 'inconclusive':
+        return { backgroundColor: '#fceeca', color: '#ad5c19', borderColor: '#fad98f' };
+    }
   };
 
   if (evaluations.length === 0) {
@@ -35,7 +46,8 @@ export function ResultsTable({ evaluations }: ResultsTableProps) {
 
   return (
     <div className={styles.container}>
-      <table className={styles.table}>
+      <div className="overflow-x-auto">
+        <table className={styles.table}>
         <thead className={styles.thead}>
           <tr>
             <th className={styles.th}>Submission</th>
@@ -48,7 +60,7 @@ export function ResultsTable({ evaluations }: ResultsTableProps) {
         </thead>
         <tbody className={styles.tbody}>
           {evaluations.map(evaluation => (
-            <tr key={evaluation.id}>
+            <tr key={evaluation.id} className={styles.row}>
               <td className={styles.td}>
                 <div className="font-medium">{evaluation.submissionId}</div>
                 <div className="text-xs text-gray-500">Queue: {evaluation.queueId}</div>
@@ -65,8 +77,11 @@ export function ResultsTable({ evaluations }: ResultsTableProps) {
                 </div>
               </td>
               <td className={styles.td}>
-                <span className={`${styles.verdictBadge} ${VERDICT_COLORS[evaluation.verdict]}`}>
-                  {evaluation.verdict}
+                <span
+                  className={`${styles.verdictBadge} border`}
+                  style={getVerdictStyle(evaluation.verdict)}
+                >
+                  {evaluation.verdict.toUpperCase()}
                 </span>
               </td>
               <td className={styles.tdReasoning}>
@@ -81,6 +96,7 @@ export function ResultsTable({ evaluations }: ResultsTableProps) {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

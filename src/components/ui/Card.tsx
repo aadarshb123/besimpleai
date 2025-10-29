@@ -6,7 +6,7 @@ interface CardProps {
 }
 
 const styles = {
-  card: 'bg-white rounded-lg shadow p-6',
+  card: 'bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 p-6 border border-gray-100',
 };
 
 export function Card({ children, className = '' }: CardProps) {
