@@ -3,14 +3,19 @@
 import { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Alert } from '@/components/ui/Alert';
+import { Button } from '@/components/ui/Button';
+import { Download } from 'lucide-react';
 import { Verdict } from '@/lib/types';
 import { useEvaluations } from '@/hooks/useEvaluations';
 import { ResultsStats } from './ResultsStats';
+import { ResultsCharts } from './ResultsCharts';
 import { ResultsFilters } from './ResultsFilters';
 import { ResultsTable } from './ResultsTable';
+import { exportEvaluationsToCSV } from '@/utils/csvExport';
 
 const styles = {
-  title: 'text-lg font-semibold mb-4',
+  header: 'flex items-center justify-between mb-4',
+  title: 'text-lg font-semibold',
   loading: 'text-center py-12 text-gray-500',
 };
 
@@ -69,6 +74,13 @@ export function ResultsView() {
     return filtered;
   }, [evaluations, selectedJudgeIds, selectedQuestionIds, selectedVerdicts]);
 
+  // Handle CSV export
+  const handleExport = () => {
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `evaluations-${timestamp}.csv`;
+    exportEvaluationsToCSV(filteredEvaluations, filename);
+  };
+
   if (isLoading) {
     return (
       <Card>
@@ -100,10 +112,24 @@ export function ResultsView() {
 
   return (
     <Card>
-      <h2 className={styles.title}>Evaluation Results</h2>
+      <div className={styles.header}>
+        <h2 className={styles.title}>Evaluation Results</h2>
+        <Button
+          variant="secondary"
+          onClick={handleExport}
+          className="flex items-center gap-2"
+          disabled={filteredEvaluations.length === 0}
+        >
+          <Download size={16} />
+          Export to CSV
+        </Button>
+      </div>
 
       {/* Stats Section */}
       <ResultsStats evaluations={filteredEvaluations} />
+
+      {/* Charts Section */}
+      <ResultsCharts evaluations={filteredEvaluations} />
 
       {/* Filters Section */}
       <ResultsFilters

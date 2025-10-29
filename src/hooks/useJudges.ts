@@ -55,10 +55,25 @@ export function useJudges() {
   };
 
   const handleToggleActive = async (id: string, active: boolean) => {
+    // Optimistic update - update UI immediately
+    setState(prev => ({
+      ...prev,
+      judges: prev.judges.map(judge =>
+        judge.id === id ? { ...judge, active } : judge
+      ),
+    }));
+
     try {
       await toggleJudgeActive(id, active);
-      await fetchJudges(); // Refresh list
+      // Silently refresh to get the latest data without showing loading state
+      const data = await getJudges();
+      setState(prev => ({
+        ...prev,
+        judges: data,
+      }));
     } catch (err) {
+      // Revert optimistic update on error
+      await fetchJudges();
       throw new Error(err instanceof Error ? err.message : 'Failed to toggle judge status');
     }
   };
