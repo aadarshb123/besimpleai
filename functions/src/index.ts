@@ -34,6 +34,7 @@ async function callOpenAI(
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
       ],
+      max_tokens: 4096,
       temperature: 0.3,
     }),
   });
@@ -50,11 +51,21 @@ async function callOpenAI(
     throw new Error('No response from OpenAI');
   }
 
-  const parsed = JSON.parse(content);
-  return {
-    verdict: parsed.verdict,
-    reasoning: parsed.reasoning,
-  };
+  try {
+    const parsed = JSON.parse(content);
+
+    if (!parsed.verdict || !parsed.reasoning) {
+      throw new Error('Invalid response format: missing verdict or reasoning');
+    }
+
+    return {
+      verdict: parsed.verdict,
+      reasoning: parsed.reasoning,
+    };
+  } catch (parseError) {
+    console.error('Failed to parse OpenAI response:', content);
+    throw new Error(`JSON parsing failed: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
+  }
 }
 
 // Cloud Function to proxy Anthropic API calls
@@ -73,7 +84,7 @@ async function callAnthropic(
     },
     body: JSON.stringify({
       model: modelName,
-      max_tokens: 2048,
+      max_tokens: 4096,
       system: systemPrompt,
       messages: [
         { role: 'user', content: userPrompt },
@@ -94,24 +105,53 @@ async function callAnthropic(
     throw new Error('No response from Anthropic');
   }
 
-  // Anthropic sometimes returns JSON in markdown code blocks
-  let jsonText = content;
-  const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/);
-  if (jsonMatch) {
-    jsonText = jsonMatch[1];
-  }
+  try {
+    // Anthropic sometimes returns JSON in markdown code blocks
+    let jsonText = content;
+    const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/);
+    if (jsonMatch) {
+      jsonText = jsonMatch[1];
+    }
 
-  const parsed = JSON.parse(jsonText);
-  return {
-    verdict: parsed.verdict,
-    reasoning: parsed.reasoning,
-  };
+    const parsed = JSON.parse(jsonText);
+
+    if (!parsed.verdict || !parsed.reasoning) {
+      throw new Error('Invalid response format: missing verdict or reasoning');
+    }
+
+    return {
+      verdict: parsed.verdict,
+      reasoning: parsed.reasoning,
+    };
+  } catch (parseError) {
+    console.error('Failed to parse Anthropic response:', content);
+    throw new Error(`JSON parsing failed: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
+  }
 }
 
 // HTTPS Callable Function for evaluating answers
 export const evaluateAnswer = functions.https.onCall(async (request) => {
   try {
     const { provider, modelName, systemPrompt, userPrompt } = request.data as EvaluateRequest;
+
+    // Validate inputs
+    if (!provider || !modelName || !systemPrompt || !userPrompt) {
+      throw new Error('Missing required parameters');
+    }
+
+    // Check prompt sizes to prevent context window issues
+    // Rough estimate: 1 token ≈ 4 characters
+    const systemTokens = Math.ceil(systemPrompt.length / 4);
+    const userTokens = Math.ceil(userPrompt.length / 4);
+    const totalInputTokens = systemTokens + userTokens;
+
+    // Most models have 128k+ context windows, but let's be conservative
+    // Allow up to 100k tokens for input (leaving room for output)
+    const MAX_INPUT_TOKENS = 100000;
+
+    if (totalInputTokens > MAX_INPUT_TOKENS) {
+      throw new Error(`Input too large: ${totalInputTokens} tokens (max: ${MAX_INPUT_TOKENS}). Consider shortening the evaluation criteria or answer.`);
+    }
 
     // Get API keys from environment variables
     const openaiKey = process.env.OPENAI_API_KEY;
@@ -140,10 +180,16 @@ export const evaluateAnswer = functions.https.onCall(async (request) => {
   } catch (error) {
     console.error('Error in evaluateAnswer:', error);
 
+    // Determine if error is retryable
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const isRetryable = !errorMessage.includes('Input too large') &&
+                        !errorMessage.includes('not configured') &&
+                        !errorMessage.includes('Missing required parameters');
+
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      retryable: true,
+      error: errorMessage,
+      retryable: isRetryable,
     };
   }
 });
