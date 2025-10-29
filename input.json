@@ -1,0 +1,222 @@
+[
+  {
+    "id": "sub_ann_1",
+    "queueId": "queue_image_labeling",
+    "labelingTaskId": "task_vehicle_detection",
+    "createdAt": 1690000000000,
+    "questions": [
+      {
+        "rev": 1,
+        "data": {
+          "id": "q_bbox_quality",
+          "questionType": "single_choice_with_reasoning",
+          "questionText": "Are all vehicles in the image correctly labeled with bounding boxes?"
+        }
+      }
+    ],
+    "answers": {
+      "q_bbox_quality": {
+        "choice": "yes",
+        "reasoning": "All 3 vehicles (2 cars and 1 truck) have accurate bounding boxes with correct labels and proper margins."
+      }
+    }
+  },
+  {
+    "id": "sub_ann_2",
+    "queueId": "queue_image_labeling",
+    "labelingTaskId": "task_vehicle_detection",
+    "createdAt": 1690000100000,
+    "questions": [
+      {
+        "rev": 1,
+        "data": {
+          "id": "q_bbox_accuracy",
+          "questionType": "single_choice_with_reasoning",
+          "questionText": "Do the bounding boxes have appropriate margins and alignment?"
+        }
+      }
+    ],
+    "answers": {
+      "q_bbox_accuracy": {
+        "choice": "no",
+        "reasoning": "The bounding box for the sedan is too tight on the left side, cutting off part of the side mirror."
+      }
+    }
+  },
+  {
+    "id": "sub_ann_3",
+    "queueId": "queue_sentiment_analysis",
+    "labelingTaskId": "task_product_reviews",
+    "createdAt": 1690000200000,
+    "questions": [
+      {
+        "rev": 1,
+        "data": {
+          "id": "q_sentiment_correct",
+          "questionType": "single_choice_with_reasoning",
+          "questionText": "Is the sentiment classification (positive/negative/neutral) correct?"
+        }
+      }
+    ],
+    "answers": {
+      "q_sentiment_correct": {
+        "choice": "yes",
+        "reasoning": "The review text 'This product exceeded my expectations!' is correctly labeled as positive sentiment with high confidence (0.95)."
+      }
+    }
+  },
+  {
+    "id": "sub_ann_4",
+    "queueId": "queue_sentiment_analysis",
+    "labelingTaskId": "task_product_reviews",
+    "createdAt": 1690000300000,
+    "questions": [
+      {
+        "rev": 1,
+        "data": {
+          "id": "q_sentiment_edge_case",
+          "questionType": "single_choice_with_reasoning",
+          "questionText": "Is the sentiment annotation appropriate for this edge case?"
+        }
+      }
+    ],
+    "answers": {
+      "q_sentiment_edge_case": {
+        "choice": "no",
+        "reasoning": "The text 'It's okay, I guess' contains mixed sentiment and should be labeled neutral, not positive."
+      }
+    }
+  },
+  {
+    "id": "sub_ann_5",
+    "queueId": "queue_ner",
+    "labelingTaskId": "task_entity_extraction",
+    "createdAt": 1690000400000,
+    "questions": [
+      {
+        "rev": 1,
+        "data": {
+          "id": "q_entity_completeness",
+          "questionType": "single_choice_with_reasoning",
+          "questionText": "Are all named entities (PERSON, ORG, LOC, DATE) correctly identified?"
+        }
+      }
+    ],
+    "answers": {
+      "q_entity_completeness": {
+        "choice": "yes",
+        "reasoning": "All entities are correctly tagged: 'Apple Inc.' (ORG), 'Tim Cook' (PERSON), 'Cupertino' (LOC), 'September 2023' (DATE)."
+      }
+    }
+  },
+  {
+    "id": "sub_ann_6",
+    "queueId": "queue_ner",
+    "labelingTaskId": "task_entity_extraction",
+    "createdAt": 1690000500000,
+    "questions": [
+      {
+        "rev": 1,
+        "data": {
+          "id": "q_entity_boundaries",
+          "questionType": "single_choice_with_reasoning",
+          "questionText": "Are the entity boundaries accurate and complete?"
+        }
+      }
+    ],
+    "answers": {
+      "q_entity_boundaries": {
+        "choice": "no",
+        "reasoning": "The organization name 'Microsoft Corporation' is only tagged as 'Microsoft', missing 'Corporation'."
+      }
+    }
+  },
+  {
+    "id": "sub_ann_7",
+    "queueId": "queue_text_classification",
+    "labelingTaskId": "task_topic_categorization",
+    "createdAt": 1690000600000,
+    "questions": [
+      {
+        "rev": 1,
+        "data": {
+          "id": "q_category_correct",
+          "questionType": "single_choice_with_reasoning",
+          "questionText": "Is the article correctly categorized into the appropriate topic?"
+        }
+      }
+    ],
+    "answers": {
+      "q_category_correct": {
+        "choice": "yes",
+        "reasoning": "The article about neural networks and machine learning is correctly categorized as 'Technology' with subcategory 'Artificial Intelligence'."
+      }
+    }
+  },
+  {
+    "id": "sub_ann_8",
+    "queueId": "queue_text_classification",
+    "labelingTaskId": "task_topic_categorization",
+    "createdAt": 1690000700000,
+    "questions": [
+      {
+        "rev": 1,
+        "data": {
+          "id": "q_multi_category",
+          "questionType": "single_choice_with_reasoning",
+          "questionText": "For content spanning multiple topics, is the primary category correct?"
+        }
+      }
+    ],
+    "answers": {
+      "q_multi_category": {
+        "choice": "no",
+        "reasoning": "While the article discusses both technology and business, it's primarily about market analysis and should be categorized as 'Business', not 'Technology'."
+      }
+    }
+  },
+  {
+    "id": "sub_ann_9",
+    "queueId": "queue_quality_review",
+    "labelingTaskId": "task_annotation_validation",
+    "createdAt": 1690000800000,
+    "questions": [
+      {
+        "rev": 1,
+        "data": {
+          "id": "q_guideline_compliance",
+          "questionType": "single_choice_with_reasoning",
+          "questionText": "Does the annotation follow all project guidelines and quality standards?"
+        }
+      }
+    ],
+    "answers": {
+      "q_guideline_compliance": {
+        "choice": "yes",
+        "reasoning": "The annotation includes all required fields, uses correct formatting, and follows the project's style guide for entity labeling."
+      }
+    }
+  },
+  {
+    "id": "sub_ann_10",
+    "queueId": "queue_quality_review",
+    "labelingTaskId": "task_annotation_validation",
+    "createdAt": 1690000900000,
+    "questions": [
+      {
+        "rev": 1,
+        "data": {
+          "id": "q_production_ready",
+          "questionType": "single_choice_with_reasoning",
+          "questionText": "Is this annotation ready for production use in training data?"
+        }
+      }
+    ],
+    "answers": {
+      "q_production_ready": {
+        "choice": "no",
+        "reasoning": "The annotation contains inconsistent label formatting and missing confidence scores, requiring revision before production use."
+      }
+    }
+  }
+]
