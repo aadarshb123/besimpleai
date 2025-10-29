@@ -22,8 +22,10 @@ export function useEvaluations(): UseEvaluationsResult {
 
     try {
       const data = await getEvaluations();
+      console.log('Fetched evaluations:', data.length, data);
       setEvaluations(data);
     } catch (err) {
+      console.error('Error fetching evaluations:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch evaluations');
     } finally {
       setIsLoading(false);

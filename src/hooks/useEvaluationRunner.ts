@@ -126,6 +126,15 @@ export function useEvaluationRunner() {
 
               completed++;
             } else {
+              // Log the specific error for debugging
+              console.error(`Evaluation failed for ${judge.name}:`, {
+                success: result.success,
+                error: result.error,
+                verdict: result.verdict,
+                reasoning: result.reasoning,
+                submissionId: submission.id,
+                questionId,
+              });
               failed++;
             }
 
