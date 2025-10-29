@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { SubmissionUpload } from '@/components/submissions/SubmissionUpload';
 import { SubmissionList } from '@/components/submissions/SubmissionList';
 import { JudgeForm } from '@/components/judges/JudgeForm';
@@ -24,11 +24,16 @@ function App() {
   // Edit state management
   const [editingJudge, setEditingJudge] = useState<Judge | null>(null);
 
+  // Ref to the judge form for scrolling
+  const judgeFormRef = useRef<HTMLDivElement>(null);
+
   // Handler to start editing a judge
   const handleEdit = (judge: Judge) => {
     setEditingJudge(judge);
     // Scroll to the form
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      judgeFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   // Handler to cancel editing
@@ -70,12 +75,14 @@ function App() {
         />
 
         {/* Judges Section */}
-        <JudgeForm
-          onSubmit={handleJudgeSubmit}
-          initialJudge={editingJudge}
-          judgeId={editingJudge?.id}
-          onCancelEdit={handleCancelEdit}
-        />
+        <div ref={judgeFormRef}>
+          <JudgeForm
+            onSubmit={handleJudgeSubmit}
+            initialJudge={editingJudge}
+            judgeId={editingJudge?.id}
+            onCancelEdit={handleCancelEdit}
+          />
+        </div>
         <JudgeList
           judges={judges}
           isLoading={judgesLoading}
