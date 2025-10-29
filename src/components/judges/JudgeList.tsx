@@ -11,6 +11,7 @@ interface JudgeListProps {
   isLoading: boolean;
   error: string | null;
   onToggleActive: (id: string, active: boolean) => Promise<void>;
+  onEdit: (judge: Judge) => void;
 }
 
 const styles = {
@@ -19,7 +20,7 @@ const styles = {
   loading: 'text-center py-8 text-gray-600',
 };
 
-export function JudgeList({ judges, isLoading, error, onToggleActive }: JudgeListProps) {
+export function JudgeList({ judges, isLoading, error, onToggleActive, onEdit }: JudgeListProps) {
   return (
     <Card>
       <h2 className={styles.title}>AI Judges</h2>
@@ -44,6 +45,7 @@ export function JudgeList({ judges, isLoading, error, onToggleActive }: JudgeLis
               key={judge.id}
               judge={judge}
               onToggleActive={onToggleActive}
+              onEdit={onEdit}
             />
           ))}
         </div>

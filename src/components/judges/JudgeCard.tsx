@@ -2,11 +2,13 @@
 
 import { Judge } from '@/lib/types';
 import { Button } from '@/components/ui/Button';
+import { Edit } from 'lucide-react';
 import { truncateText } from '@/utils/formatters';
 
 interface JudgeCardProps {
   judge: Judge;
   onToggleActive: (id: string, active: boolean) => Promise<void>;
+  onEdit: (judge: Judge) => void;
 }
 
 const styles = {
@@ -22,9 +24,13 @@ const styles = {
   actions: 'flex gap-2',
 };
 
-export function JudgeCard({ judge, onToggleActive }: JudgeCardProps) {
+export function JudgeCard({ judge, onToggleActive, onEdit }: JudgeCardProps) {
   const handleToggle = async () => {
     await onToggleActive(judge.id, !judge.active);
+  };
+
+  const handleEdit = () => {
+    onEdit(judge);
   };
 
   return (
@@ -51,6 +57,14 @@ export function JudgeCard({ judge, onToggleActive }: JudgeCardProps) {
       </div>
 
       <div className={styles.actions}>
+        <Button
+          variant="secondary"
+          onClick={handleEdit}
+          className="flex items-center justify-center"
+        >
+          <Edit size={16} className="mr-1" />
+          Edit
+        </Button>
         <Button
           variant={judge.active ? 'secondary' : 'primary'}
           onClick={handleToggle}

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { SubmissionUpload } from '@/components/submissions/SubmissionUpload';
 import { SubmissionList } from '@/components/submissions/SubmissionList';
 import { JudgeForm } from '@/components/judges/JudgeForm';
@@ -7,6 +8,7 @@ import { EvaluationRunner } from '@/components/evaluations/EvaluationRunner';
 import { ResultsView } from '@/components/results/ResultsView';
 import { useSubmissions } from '@/hooks/useSubmissions';
 import { useJudges } from '@/hooks/useJudges';
+import { Judge } from '@/lib/types';
 
 function App() {
   const { submissions, isLoading, error, refetch } = useSubmissions();
@@ -15,8 +17,35 @@ function App() {
     isLoading: judgesLoading,
     error: judgesError,
     createJudge,
+    updateJudge,
     toggleActive,
   } = useJudges();
+
+  // Edit state management
+  const [editingJudge, setEditingJudge] = useState<Judge | null>(null);
+
+  // Handler to start editing a judge
+  const handleEdit = (judge: Judge) => {
+    setEditingJudge(judge);
+    // Scroll to the form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Handler to cancel editing
+  const handleCancelEdit = () => {
+    setEditingJudge(null);
+  };
+
+  // Handler for form submission (both create and edit)
+  const handleJudgeSubmit = async (input: Parameters<typeof createJudge>[0]) => {
+    if (editingJudge) {
+      // Update existing judge
+      await updateJudge(editingJudge.id, input);
+    } else {
+      // Create new judge
+      await createJudge(input);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -41,12 +70,18 @@ function App() {
         />
 
         {/* Judges Section */}
-        <JudgeForm onSubmit={createJudge} />
+        <JudgeForm
+          onSubmit={handleJudgeSubmit}
+          initialJudge={editingJudge}
+          judgeId={editingJudge?.id}
+          onCancelEdit={handleCancelEdit}
+        />
         <JudgeList
           judges={judges}
           isLoading={judgesLoading}
           error={judgesError}
           onToggleActive={toggleActive}
+          onEdit={handleEdit}
         />
 
         {/* Assignment Section */}
