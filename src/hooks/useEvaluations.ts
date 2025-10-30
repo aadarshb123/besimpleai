@@ -34,6 +34,18 @@ export function useEvaluations(): UseEvaluationsResult {
 
   useEffect(() => {
     fetchEvaluations();
+
+    // Listen for evaluation completion events to auto-refresh
+    const handleEvaluationsCompleted = () => {
+      console.log('Evaluations completed, refreshing results...');
+      fetchEvaluations();
+    };
+
+    window.addEventListener('evaluationsCompleted', handleEvaluationsCompleted);
+
+    return () => {
+      window.removeEventListener('evaluationsCompleted', handleEvaluationsCompleted);
+    };
   }, []);
 
   return {

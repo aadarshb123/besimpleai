@@ -155,6 +155,9 @@ export function useEvaluationRunner() {
         error: null,
         summary,
       });
+
+      // Notify ResultsView to refresh
+      window.dispatchEvent(new CustomEvent('evaluationsCompleted'));
     } catch (err) {
       setState({
         isRunning: false,
